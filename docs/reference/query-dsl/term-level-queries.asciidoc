@@ -1,72 +1,59 @@
 [[term-level-queries]]
-== Term level queries
+== 词条查询
 
-While the <<full-text-queries,full text queries>> will analyze the query
-string before executing, the _term-level queries_ operate on the exact terms
-that are stored in the inverted index, and will normalize terms before executing 
-only for <<keyword,`keyword`>> fields with <<normalizer,`normalizer`>> property.
+<<full-text-queries,全文本查询>> 会在执行前分析查询字符串，
+而 _词条查询_ 会对存储在倒排索引中词做精确匹配，并仅对带有 <<normalizer,`normalizer`>>
+属性的 <<keyword,`keyword`>> 字段，在执行之前做词的标准化。
 
-These queries are usually used for structured data like numbers, dates, and
-enums, rather than full text fields.  Alternatively, they allow you to craft
-low-level queries, foregoing the analysis process.
+这些查询通常用于结构化数据，如数字，日期和枚举，而不是全文本字段。或者，它们允许在分析过程之前进行低级查询。
 
-The queries in this group are:
+这些查询是:
 
-<<query-dsl-term-query,`term` query>>::
+<<query-dsl-term-query,`term` 查询>>::
 
-    Find documents which contain the exact term specified in the field
-    specified.
+    查找和指定字段中指定的词精确匹配的文档。
 
-<<query-dsl-terms-query,`terms` query>>::
+<<query-dsl-terms-query,`terms` 查询>>::
 
-    Find documents which contain any of the exact terms specified in the field
-    specified.
+    查找和指定字段中指定的任何一个词精确匹配的文档。
 
-<<query-dsl-terms-set-query,`terms_set` query>>::
+<<query-dsl-terms-set-query,`terms_set` 查询>>::
 
-    Find documents which match with one or more of the specified terms. The
-    number of terms that must match depend on the specified minimum should
-    match field or script.
+    查找匹配一个或多个指定词的文档。必须和多少个词匹配取决于应匹配字段或者脚本指定的最小值。
 
-<<query-dsl-range-query,`range` query>>::
+<<query-dsl-range-query,`range` 查询>>::
 
-    Find documents where the field specified contains values (dates, numbers,
-    or strings) in the range specified.
+    查找指定字段在指定范围内（日期，数字或者字符串）的文档。
 
-<<query-dsl-exists-query,`exists` query>>::
+<<query-dsl-exists-query,`exists` 查询>>::
 
-    Find documents where the field specified contains any non-null value.
+    查找指定字段是非空值的文档。
 
-<<query-dsl-prefix-query,`prefix` query>>::
+<<query-dsl-prefix-query,`prefix` 查询>>::
 
-    Find documents where the field specified contains terms which begin with
-    the exact prefix specified.
+    查找和指定字段前缀精确匹配的文档
 
-<<query-dsl-wildcard-query,`wildcard` query>>::
+<<query-dsl-wildcard-query,`wildcard` 查询>>::
 
-    Find documents where the field specified contains terms which match the
-    pattern specified, where the pattern supports single character wildcards
-    (`?`) and multi-character wildcards (`*`)
+    查找指定字段包含匹配指定模式的词的文档，其中模式支持单字符通配符 (`?`) 和多字符通配符 (`*`)。
 
-<<query-dsl-regexp-query,`regexp` query>>::
+<<query-dsl-regexp-query,`regexp` 查询>>::
 
-    Find documents where the field specified contains terms which match the
-    <<regexp-syntax,regular expression>> specified.
+    查找指定字段包含匹配指定 <<regexp-syntax,正则表达式>> 的词的文档。
 
-<<query-dsl-fuzzy-query,`fuzzy` query>>::
+<<query-dsl-fuzzy-query,`fuzzy` 查询>>::
 
-    Find documents where the field specified contains terms which are fuzzily
-    similar to the specified term.  Fuzziness is measured as a
-    http://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance[Levenshtein edit distance]
-    of 1 or 2.
+    查找指定字段包含和指定词模糊相似的词的文档。模糊度是以
+    http://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance[水平编辑距离]
+    1或2来衡量的。
 
-<<query-dsl-type-query,`type` query>>::
+<<query-dsl-type-query,`type` 查询>>::
 
-    Find documents of the specified type.
+    查找指定类型的文档。
 
 <<query-dsl-ids-query,`ids` query>>::
 
-    Find documents with the specified type and IDs.
+    查找指定类型和文档号的文档。
 
 
 include::term-query.asciidoc[]
