@@ -1,8 +1,7 @@
 [[query-dsl-term-query]]
 === Term Query
 
-The `term` query finds documents that contain the *exact* term specified
-in the inverted index.  For instance:
+`term` 查询查找和倒排索引中的词 *精确* 匹配的文档。例如：
 
 [source,js]
 --------------------------------------------------
@@ -14,11 +13,9 @@ POST _search
 }
 --------------------------------------------------
 // CONSOLE
-<1> Finds documents which contain the exact term `Kimchy` in the inverted index
-    of the `user` field.
+<1> 在 `user` 字段的倒排索引中查找和词 `Kimchy` 精确匹配的文档。
 
-A `boost` parameter can be specified to give this `term` query a higher
-relevance score than another query, for instance:
+可以指定 `boost` 参数以使这个 `term` 查询比另一个 `term` 查询获得更高的相关性分数，例如：
 
 [source,js]
 --------------------------------------------------
@@ -47,43 +44,33 @@ GET _search
 --------------------------------------------------
 // CONSOLE
 
-<1> The `urgent` query clause has a boost of `2.0`, meaning it is twice as important
-    as the query clause for `normal`.
-<2> The `normal` clause has the default neutral boost of `1.0`.
+<1> `urgent` 查询子句权重 `2.0`，意味着它比 `normal` 查询子句重要两倍。
+<2> `normal` 子句默认权重 `1.0`。
 
-A `term` query can also match against <<range, range data types>>.
+`term` 查询也可以和 <<range, range data types>> 搭配。
 
-.Why doesn't the `term` query match my document?
+.为什么 `term` 查询匹配不到我的文档？
 **************************************************
 
-String fields can be of type `text` (treated as full text, like the body of an
-email), or `keyword` (treated as exact values, like an email address or a
-zip code).  Exact values (like numbers, dates, and keywords) have
-the exact value specified in the field added to the inverted index in order
-to make them searchable.
+字符串字段可以是 `text` （全文本，如电子邮件的正文），或者 `keyword`
+（精确值，如电子邮件地址或者邮政编码）。精确的值（如数字，日期和关键字）
+会被添加到字段的倒排索引中，以使其可搜索。
 
-However, `text` fields are `analyzed`. This means that their
-values are first passed through an <<analysis,analyzer>> to produce a list of
-terms, which are then added to the inverted index.
+但是， `text` 字段会被 `分析`。这意味着他们的值首先通过 <<analysis,分析器>> 生成一个词列表，
+然后这些词被添加到倒排索引中。
 
-There are many ways to analyze text: the default
-<<analysis-standard-analyzer,`standard` analyzer>> drops most punctuation,
-breaks up text into individual words, and lower cases them.    For instance,
-the `standard` analyzer would turn the string ``Quick Brown Fox!'' into the
-terms [`quick`, `brown`, `fox`].
+分析文本的方式有很多种：默认的 <<analysis-standard-analyzer,`标准` 分析器>>
+会丢弃大多数标点符号，将文本分解为单个单词，并将其小写。例如，
+`standard` 分析器会把字符串 ``Quick Brown Fox!'' 分解成 [`quick`, `brown`, `fox`]。
 
-This analysis process makes it possible to search for individual words
-within a big block of full text.
+这个分析过程使得在一大块全文本中搜索单个单词成为可能。
 
-The `term` query looks for the *exact* term in the field's inverted index --
-it doesn't know anything about the field's analyzer.  This makes it useful for
-looking up values in keyword fields, or in numeric or date
-fields.  When querying full text fields, use the
-<<query-dsl-match-query,`match` query>> instead, which understands how the field
-has been analyzed.
+`term` 查询在字段的倒排索引中查找 *精确* 匹配的词 -- 它对于字段的分析器一无所知。
+这使得在关键字字段或者数字字段或者日期字段中查找值非常有用。查询全文本字段时，
+使用 <<query-dsl-match-query,`match` 查询>>，它理解字段是怎么被分析的。
 
 
-To demonstrate, try out the example below.  First, create an index, specifying the field mappings, and index a document:
+要演示，请尝试下面的示例。首先，创建索引，指定字段的映射，并索引文档：
 
 [source,js]
 --------------------------------------------------
@@ -111,12 +98,12 @@ PUT my_index/_doc/1
 --------------------------------------------------
 // CONSOLE
 
-<1> The `full_text` field is of type `text` and will be analyzed.
-<2> The `exact_value` field is of type `keyword` and will NOT be analyzed.
-<3> The `full_text` inverted index will contain the terms: [`quick`, `foxes`].
-<4> The `exact_value` inverted index will contain the exact term: [`Quick Foxes!`].
+<1> `full_text` 字段是 `text` 类型，会被分析。
+<2> `exact_value` 字段是 `keyword` 类型，不会被分析。
+<3> `full_text` 倒排索引包含词： [`quick`, `foxes`]。
+<4> `exact_value` 倒排索引包含词： [`Quick Foxes!`]。
 
-Now, compare the results for the `term` query and the `match` query:
+现在，对比 `term` 查询和 `match` 查询的结果：
 
 [source,js]
 --------------------------------------------------
@@ -159,12 +146,10 @@ GET my_index/_search
 // CONSOLE
 // TEST[continued]
 
-<1> This query matches because the `exact_value` field contains the exact
-    term `Quick Foxes!`.
-<2> This query does not match, because the `full_text` field only contains
-    the terms `quick` and `foxes`. It does not contain the exact term
-    `Quick Foxes!`.
-<3> A `term` query for the term `foxes` matches the `full_text` field.
-<4> This `match` query on the `full_text` field first analyzes the query string,
-    then looks for documents containing `quick` or `foxes` or both.
+<1> 这个查询匹配到文档是因为 `exact_value` 字段的倒排索引中包含词 `Quick Foxes!`。
+<2> 这个查询不能匹配到文档，因为 `full_text` 字段的倒排索引中只包含词 `quick`
+    和 `foxes`。不包含词 `Quick Foxes!`。
+<3> 在 `full_text` 字段上，对词 `foxes` 做 `term` 查询，能匹配到文档。
+<4> 在 `full_text` 字段上做 `match` 查询，首先会分析查询字符串，然后查找包含 `quick` 或者
+    `foxes` 或者这两个词都包含的文档。
 **************************************************
