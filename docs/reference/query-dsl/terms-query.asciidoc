@@ -1,8 +1,7 @@
 [[query-dsl-terms-query]]
 === Terms Query
 
-Filters documents that have fields that match any of the provided terms
-(*not analyzed*). For example:
+能和提供的任何一个词（*未分析*）匹配。例如：
 
 [source,js]
 --------------------------------------------------
@@ -15,65 +14,50 @@ GET /_search
 --------------------------------------------------
 // CONSOLE
 
-NOTE: Highlighting `terms` queries is best-effort only, so terms of a `terms`
-query might not be highlighted depending on the highlighter implementation that
-is selected and on the number of terms in the `terms` query.
+NOTE: 高亮显示的 `terms` 查询是最优的，但是 `terms` 查询的词也可能不会高亮显示，
+这取决于选择的高亮实现和 `terms` 查询中词的数量。
 
 [float]
 [[query-dsl-terms-lookup]]
-===== Terms lookup mechanism
+===== 词查找机制
 
-When it's needed to specify a `terms` filter with a lot of terms it can
-be beneficial to fetch those term values from a document in an index. A
-concrete example would be to filter tweets tweeted by your followers.
-Potentially the amount of user ids specified in the terms filter can be
-a lot. In this scenario it makes sense to use the terms filter's terms
-lookup mechanism.
+当需要指定一个带有很多词的 `terms` 过滤器时，有利于从索引的文档中获取这些词的值。
+一个具体的例子是过滤你的粉丝发推特的推文。词过滤器中指定的用户ID的数量可能很多。
+在这种情况下，使用词过滤器的词查找机制是有意义的。
 
-The terms lookup mechanism supports the following options:
+词查找机制支持以下选项：
 
 [horizontal]
 `index`::
-    The index to fetch the term values from.
+    从中获取词的值的索引。
 
 `type`::
-    The type to fetch the term values from.
+    从中获取词的值的类型。
 
 `id`::
-    The id of the document to fetch the term values from.
+    从中获取词的值的文档的ID。
 
 `path`::
-    The field specified as path to fetch the actual values for the
-    `terms` filter.
+    该字段指定为获取 `terms` 过滤器的实际值的路径。
 
 `routing`::
-    A custom routing value to be used when retrieving the
-    external terms doc.
+    当检索外部的词的文档时要使用的自定义路由值。
 
-The values for the `terms` filter will be fetched from a field in a
-document with the specified id in the specified type and index.
-Internally a get request is executed to fetch the values from the
-specified path. At the moment for this feature to work the `_source`
-needs to be stored.
+`terms` 过滤器的值将从指定的索引和类型中指定ID的文档中的字段中获取。
+在内部执行get请求从指定路径获取值。要使此功能正常工作，需要存储 `_source`。
 
-Also, consider using an index with a single shard and fully replicated
-across all nodes if the "reference" terms data is not large. The lookup
-terms filter will prefer to execute the get request on a local node if
-possible, reducing the need for networking.
+此外，如果 "reference" 词数据不大，请考虑使用单分片的索引，并在所有节点上完全复制索引。
+如果可能的话，查找词过滤器更愿意在本地节点执行get请求，从而减少对网络的需求。
 
 [WARNING]
-Executing a Terms Query request with a lot of terms can be quite slow,
-as each additional term demands extra processing and memory.
-To safeguard against this, the maximum number of terms that can be used
-in a Terms Query both directly or through lookup has been limited to `65536`.
-This default maximum can be changed for a particular index with the index setting
- `index.max_terms_count`.
+执行很多词的词查询请求可能非常慢，因为每增加一个词都需要额外的处理和内存。
+为防止这种情况的发生，词查询中可以使用的词的最大数量被限制为 `65536`。
+使用索引的 `index.max_terms_count` 设置可以改变特定索引的默认最大值。
 
 [float]
-===== Terms lookup twitter example
-At first we index the information for user with id 2, specifically, its
-followers, then index a tweet from user with id 1. Finally we search on
-all the tweets that match the followers of user 2.
+===== 词查找推特的例子
+首先，我们为ID为2的用户创建其关注者的索引信息，然后为ID为1的用户创建推文索引。最后，
+我们搜索用户2的关注者的所有推文。
 
 [source,js]
 --------------------------------------------------
@@ -103,8 +87,7 @@ GET /tweets/_search
 --------------------------------------------------
 // CONSOLE
 
-The structure of the external terms document can also include an array of
-inner objects, for example:
+外部词文档的结构也可以包含一个内部对象的数组，例如：
 
 [source,js]
 --------------------------------------------------
@@ -122,4 +105,4 @@ PUT /users/_doc/2
 --------------------------------------------------
 // CONSOLE
 
-In which case, the lookup path will be `followers.id`.
+在这种情况下，查找路径是 `followers.id`。
