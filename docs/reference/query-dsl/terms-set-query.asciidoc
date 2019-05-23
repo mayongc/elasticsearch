@@ -1,14 +1,11 @@
 [[query-dsl-terms-set-query]]
 === Terms Set Query
 
-Returns any documents that match with at least one or more of the
-provided terms. The terms are not analyzed and thus must match exactly.
-The number of terms that must match varies per document and is either
-controlled by a minimum should match field or computed per document in
-a minimum should match script.
+返回和提供的词至少匹配一个或者多个的任何文档。词不会被分析，因此必须精确匹配。
+必须匹配的词的数量每个文档都不同，由最小应该匹配字段控制，
+或者在最小应该匹配的脚本里面计算每个文档必须匹配的数量。
 
-The field that controls the number of required terms that must match must
-be a number field:
+控制必须匹配词的数量的字段必须是一个数字字段：
 
 [source,js]
 --------------------------------------------------
@@ -40,7 +37,7 @@ PUT /my-index/_doc/2?refresh
 // CONSOLE
 // TESTSETUP
 
-An example that uses the minimum should match field:
+使用最小应该匹配字段的例子：
 
 [source,js]
 --------------------------------------------------
@@ -58,7 +55,7 @@ GET /my-index/_search
 --------------------------------------------------
 // CONSOLE
 
-Response:
+返回结果:
 
 [source,js]
 --------------------------------------------------
@@ -91,15 +88,12 @@ Response:
 --------------------------------------------------
 // TESTRESPONSE[s/"took": 13,/"took": "$body.took",/]
 
-Scripts can also be used to control how many terms are required to match
-in a more dynamic way. For example a create date or a popularity field
-can be used as basis for the number of required terms to match.
+更动态的方式是使用脚本来控制多少个词需要匹配。
+例如创建日期或者流行字段也能被用来作为要匹配的词的数量的基础。
 
-Also the `params.num_terms` parameter is available in the script to indicate the
-number of terms that have been specified.
+此外，参数 `params.num_terms` 在脚本中也是可用的，用来指明已经指定的词的数量。
 
-An example that always limits the number of required terms to match to never
-become larger than the number of terms specified:
+始终限制要匹配的词的数量永远不会超过指定词的数量的示例：
 
 [source,js]
 --------------------------------------------------
