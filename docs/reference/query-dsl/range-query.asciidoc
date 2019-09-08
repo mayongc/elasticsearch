@@ -1,11 +1,9 @@
 [[query-dsl-range-query]]
 === Range Query
 
-Matches documents with fields that have terms within a certain range.
-The type of the Lucene query depends on the field type, for `string`
-fields, the `TermRangeQuery`, while for number/date fields, the query is
-a `NumericRangeQuery`. The following example returns all documents where
-`age` is between `10` and `20`:
+匹配文档的字段的词在特定的范围内。Lucene查询的类型取决于字段的类型，
+对于字符串字段，范围查询是 `TermRangeQuery`，而对于数字或者日期字段，
+范围查询是 `NumericRangeQuery`。下面的示例返回年龄在10到20岁之间的所有文档：
 
 [source,js]
 --------------------------------------------------
@@ -22,23 +20,22 @@ GET _search
     }
 }
 --------------------------------------------------
-// CONSOLE 
+// CONSOLE
 
-The `range` query accepts the following parameters:
+范围查询接受以下参数：
 
 [horizontal]
-`gte`:: 	Greater-than or equal to
-`gt`::  	Greater-than
-`lte`:: 	Less-than or equal to
-`lt`::  	Less-than
-`boost`:: 	Sets the boost value of the query, defaults to `1.0`
+`gte`:: 	大于或等于
+`gt`::  	大于
+`lte`:: 	小于或等于
+`lt`::  	小于
+`boost`:: 	设置查询的权重值，默认为 `1.0`
 
 
 [[ranges-on-dates]]
-==== Ranges on date fields
+==== 日期字段范围
 
-When running `range` queries on fields of type <<date,`date`>>, ranges can be
-specified using <<date-math>>:
+当在 <<date,`日期`>> 类型的字段上运行 `范围` 查询时，可以使用 <<date-math>> 指定范围：
 
 [source,js]
 --------------------------------------------------
@@ -56,41 +53,36 @@ GET _search
 --------------------------------------------------
 // CONSOLE
 
-===== Date math and rounding
+===== 日期数学表达和舍入
 
-When using <<date-math,date math>> to round dates to the nearest day, month,
-hour, etc, the rounded dates depend on whether the ends of the ranges are
-inclusive or exclusive.
+使用 <<date-math,date math>> 将日期舍入到最近的日，月份，小时等时，
+舍入的日期取决于范围的结尾是包含还是排除。
 
-Rounding up moves to the last millisecond of the rounding scope, and rounding
-down to the first millisecond of the rounding scope. For example:
+向上舍入是取舍入范围的最后一毫秒，向下舍入是取舍入范围的第一毫秒。例如：
 
 [horizontal]
 `gt`::
 
-    Greater than the date rounded up: `2014-11-18||/M` becomes
-    `2014-11-30T23:59:59.999`, ie excluding the entire month.
+    大于日期，向上舍入：`2014-11-18||/M` 变为 `2014-11-30T23:59:59.999`，
+    即不包含整个11月。
 
 `gte`::
 
-    Greater than or equal to the date rounded down: `2014-11-18||/M` becomes
-    `2014-11-01`, ie including the entire month.
+    大于等于日期，向下舍入：`2014-11-18||/M` 变为 `2014-11-01`，即包含整个11月。
 
 `lt`::
 
-    Less than the date rounded down: `2014-11-18||/M` becomes `2014-11-01`, ie
-    excluding the entire month.
+    小于日期，向下舍入：`2014-11-18||/M` 变为 `2014-11-01`，即不包含整个11月。
 
 `lte`::
 
-    Less than or equal to the date rounded up: `2014-11-18||/M` becomes
-    `2014-11-30T23:59:59.999`, ie including the entire month.
+    小于等于日期，向上舍入：`2014-11-18||/M` 变为 `2014-11-30T23:59:59.999`，
+    即包含整个11月。
 
-===== Date format in range queries
+===== 范围查询中的日期格式化
 
-Formatted dates will be parsed using the <<mapping-date-format,`format`>>
-specified on the <<date,`date`>> field by default, but it can be overridden by
-passing the `format` parameter to the `range` query:
+对范围查询格式化日期时，将默认使用 <<date,`date`>> 字段中指定的
+<<mapping-date-format,`format`>> 进行解析，当然也可以通过 `format` 参数来覆盖默认的设置。
 
 [source,js]
 --------------------------------------------------
@@ -107,19 +99,16 @@ GET _search
     }
 }
 --------------------------------------------------
-// CONSOLE 
+// CONSOLE
 
-Note that if the date misses some of the year, month and day coordinates, the
-missing parts are filled with the start of
-https://en.wikipedia.org/wiki/Unix_time[unix time], which is January 1st, 1970.
-This means, that when e.g. specifying `dd` as the format, a value like `"gte" : 10`
-will translate to `1970-01-10T00:00:00.000Z`.
+注意：如果日期缺失了年，月和日中的部分，缺失的部分将被填充为
+https://en.wikipedia.org/wiki/Unix_time[unix time] 的初始值，也就是1970年1月1日。
+这意味着，将 `dd` 指定为格式时，像 `"gte" : 10` 将转换为 `1970-01-10T00:00:00.000Z`。
 
-===== Time zone in range queries
+===== 范围查询中的时区
 
-Dates can be converted from another timezone to UTC either by specifying the
-time zone in the date value itself (if the <<mapping-date-format, `format`>>
-accepts it), or it can be specified as the `time_zone` parameter:
+可以在日期值本身（如果是  <<mapping-date-format, `format`>> 中可接受的格式）中指定时区，
+将日期从另一个时区转换为UTC时间，或者也可以指定 `time_zone` 参数：
 
 [source,js]
 --------------------------------------------------
@@ -137,28 +126,27 @@ GET _search
 }
 --------------------------------------------------
 // CONSOLE
-<1> This date will be converted to `2014-12-31T23:00:00 UTC`.
-<2> `now` is not affected by the `time_zone` parameter (dates must be stored as UTC).
+<1> 这个日期将被转换为 `2014-12-31T23:00:00 UTC`。
+<2> `now` 是不受 `time_zone` 参数影响的（日期必须存储为UTC时间）。
 
 [[querying-range-fields]]
-==== Querying range fields
+==== 查询范围字段
 
-`range` queries can be used on fields of type <<range,`range`>>, allowing to
-match a range specified in the query with a range field value in the document.
-The `relation` parameter controls how these two ranges are matched:
+`range` 查询可用于 <<range,`range`>> 类型的字段，允许将查询中指定的范围与文档中的范围字段匹配，
+ `relation` 参数控制如何匹配两个范围：
 
 [horizontal]
 `WITHIN`::
 
-    Matches documents who's range field is entirely within the query's range.
+    匹配范围字段完全在查询范围内的文档。
 
 `CONTAINS`::
 
-    Matches documents who's range field entirely contains the query's range.
+    匹配范围字段完全包含查询范围的文档。
 
 `INTERSECTS`::
 
-    Matches documents who's range field intersects the query's range.
-    This is the default value when querying range fields.
+    匹配范围字段和查询范围相交的文档。
+    这是查询范围字段时的默认值。
 
-For examples, see <<range,`range`>> mapping type.
+有关示例，请参见 <<range,`range`>> 映射类型。
